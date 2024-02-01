@@ -1,4 +1,22 @@
+body{
+    background-color: rgb(88, 88, 88);
+}
+.title{
+    display: inline-flex;
+    margin-top:.5%;
+    background-color: black;
+    padding-bottom: 5px;
+    color:white;
+    padding-inline: 2%;
+}
 .pic{
-    max-width: 50%;
-    overflow: hidden;
+    max-width: 75%;
+}
+.playBtn{
+    margin-block:.5rem;
+   font-size: 2rem;
+   width: 10rem;
+}
+.hintBtn{
+    margin-block: .5rem;
 }
