@@ -27,6 +27,7 @@ submitBtn.addEventListener('click', function(){
     userGuess();
 })
 
+// Call giveHint function from clicking hint button
 hintBtn.addEventListener('click', function(){
     giveHint();
 })
@@ -42,7 +43,7 @@ document.addEventListener('keypress', function(event){
 
 
 
-
+// Updating game status every time a guess is made, either adding a letter or adding to guesses
 function updateGameState(){
     mainWord.innerText = letterArray.join(" ");
     chances.innerText = `Guesses Used: ${guesses} / 6`;
@@ -69,7 +70,7 @@ function dataCall(){
     })
 
     
-
+    // Start of game function
     function startGame(word){
 
         // Setting image to first image shown with no man, also removing hidden attribute from values on html side for game to start, hiding playBtn since no longer needed
@@ -98,14 +99,19 @@ function dataCall(){
     
 }
 
+// hint function
 function giveHint(){
+    // Changing text on html side to hint from json file and making it visible
     hintTxt.innerText = hint;
     hintTxt.removeAttribute("hidden");
     hintBtn.setAttribute("hidden", "hidden");
 }
 
+// Function when user makes a guess
 function userGuess(){
+    // making the guessed letter lowercase
     let guessedLetter = guessInput.value.toLowerCase();
+    // if the letter is included in our random word generated then it will go through each letter in the word to see where it matches and replace the "_" with the given letter the user guessed
     if(randomWord.includes(guessedLetter)){
         for(let i = 0; i < randomWord.length; i++){
             if(randomWord[i] === guessedLetter){
@@ -113,17 +119,23 @@ function userGuess(){
             }
         }
     }
+    // In the case the user is wrong then a guess is added to the total and the image is changed on the screen
     else{
         hangImg.src=`./media/${guesses+2}.png`;
         guesses += 1;
     }
+    // updateGameState function is called to update the screen on the html side and keep the info accurate
     updateGameState();
+    // Input field is set to blank for user to guess again
     guessInput.value = "";
 }
 
 
+// function to check if game is over whether the user made the wrong amount of guesses or guessed the word right
 function endGame(){
+    // User loses the game if the guesses reach 6
     if(guesses==6){
+        // The randomWord is given to the user after being wrong, and everything is reset back to the playBtn screen
         alert(`Your word was ${randomWord}. Good luck next time!`);
         mainWord.setAttribute("hidden", "hidden");
         chances.setAttribute("hidden", "hidden");
@@ -134,4 +146,19 @@ function endGame(){
         hintTxt.setAttribute("hidden", "hidden");
         playBtn.removeAttribute("hidden");
     }
+    // User guesses correctly and wins
+    // Checking if the letter array is matching with the randomWord and isn't just blank
+    else if(letterArray.join("") === randomWord && randomWord != ""){
+        // Giving the randomWord to the user with a winning alert and restarting the game back to the playBtn screen with a reset on the hangman image
+        alert(`You win! Your word was ${randomWord}`);
+        mainWord.setAttribute("hidden", "hidden");
+        chances.setAttribute("hidden", "hidden");
+        guessLabel.setAttribute("hidden", "hidden");
+        guessInput.setAttribute("hidden", "hidden");
+        submitBtn.setAttribute("hidden", "hidden");
+        hintBtn.setAttribute("hidden", "hidden");
+        hintTxt.setAttribute("hidden", "hidden");
+        playBtn.removeAttribute("hidden");
+        hangImg.src="./media/7.png"
+}
 }
