@@ -7,16 +7,18 @@ let submitBtn = document.getElementById("submitBtn");
 let playBtn = document.getElementById("playBtn");
 let hintBtn = document.getElementById("hintBtn");
 let guessLabel = document.getElementById("guessLabel");
+let hintTxt = document.getElementById("hintTxt");
 let randomword = "";
 let hint = "";
 let guesses = 0;
-let guessedLetter = "";
+
 
 // Amount of spaces in the word that we'll need for later
 let letterArray = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 
 // call dataCall function from clicking play button upon startup
 playBtn.addEventListener('click', function(){
+    guesses = 0;
     dataCall();
 })
 
@@ -25,12 +27,28 @@ submitBtn.addEventListener('click', function(){
     userGuess();
 })
 
+hintBtn.addEventListener('click', function(){
+    giveHint();
+})
+
 // call userGuess from hitting Enter key
 document.addEventListener('keypress', function(event){
     if(event.key == "Enter"){
         userGuess();
     }
 })
+
+
+
+
+
+
+function updateGameState(){
+    mainWord.innerText = letterArray.join(" ");
+    chances.innerText = `Guesses Used: ${guesses} / 6`;
+    endGame();
+}
+
 
 // Function that activates once play button is clicked, hiding playBtn and setting everything that needs to be visible
 function dataCall(){
@@ -46,9 +64,11 @@ function dataCall(){
         // assigning variable hint to the random number generated index of the hints array from the json file 
         hint = data.hints[rndNum];
 
-        // starting game function called
+        // starting game function called with randomword pulled from our Json file
         startGame(randomWord);
     })
+
+    
 
     function startGame(word){
 
@@ -72,25 +92,46 @@ function dataCall(){
             letterArray[i] = "_";
             updateGameState();
             guessInput.readOnly = false;
-
-            function updateGameState(){
-                mainWord.innerText = letterArray.join(" ");
-                chances.innerText = `Guesses Used: ${guesses} / 6`;
-            }
         }
         console.log(randomWord);
     }
     
 }
 
-function userGuess(){
-    guessedLetter = guessInput.value;
-    guessInput.value = "";
-
-    for (let i = 0; i < randomWord.length; i++){
-        if (mainWord.contains(guessedLetter)){
-            letterArray[i] = guessedLetter.toLowerCase;
-        }
-    }
+function giveHint(){
+    hintTxt.innerText = hint;
+    hintTxt.removeAttribute("hidden");
+    hintBtn.setAttribute("hidden", "hidden");
 }
 
+function userGuess(){
+    let guessedLetter = guessInput.value.toLowerCase();
+    if(randomWord.includes(guessedLetter)){
+        for(let i = 0; i < randomWord.length; i++){
+            if(randomWord[i] === guessedLetter){
+                letterArray[i] = guessedLetter;
+            }
+        }
+    }
+    else{
+        hangImg.src=`./media/${guesses+2}.png`;
+        guesses += 1;
+    }
+    updateGameState();
+    guessInput.value = "";
+}
+
+
+function endGame(){
+    if(guesses==6){
+        alert(`Your word was ${randomWord}. Good luck next time!`);
+        mainWord.setAttribute("hidden", "hidden");
+        chances.setAttribute("hidden", "hidden");
+        guessLabel.setAttribute("hidden", "hidden");
+        guessInput.setAttribute("hidden", "hidden");
+        submitBtn.setAttribute("hidden", "hidden");
+        hintBtn.setAttribute("hidden", "hidden");
+        hintTxt.setAttribute("hidden", "hidden");
+        playBtn.removeAttribute("hidden");
+    }
+}
